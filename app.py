@@ -81,36 +81,78 @@ def predict_age_gender(model, image):
         st.error(f"Error during prediction: {str(e)}")
         return None
 
-# Main app
 def main():
     # Load model
     model = load_model()
-    
+
     if model is None:
         st.error("Model could not be loaded. Please ensure 'resnet50_best_model.keras' is in the current directory.")
         st.stop()
-    
+
+    # Initialize uploaded_file
+    uploaded_file = None
+
     # File uploader
     uploaded_file = st.file_uploader(
         "Choose an image...", 
         type=['jpg', 'jpeg', 'png'],
         help="Upload a clear face image for best results"
     )
-    
+
+    # Sample images section
+    st.markdown("---")
+    st.subheader("📸 Don't have an image? Try these samples:")
+
+    # Create 4 columns for sample images
+    sample_col1, sample_col2, sample_col3, sample_col4 = st.columns(4)
+
+    # Display sample images
+    with sample_col1:
+        st.write("**Sample 1**")
+        st.image("image1.jpg", use_column_width=True)
+        if st.button("Use Sample 1", key="sample1"):
+            uploaded_file = open("image1.jpg", "rb")
+
+    with sample_col2:
+        st.write("**Sample 2**")
+        st.image("image2.jpg", use_column_width=True)
+        if st.button("Use Sample 2", key="sample2"):
+            uploaded_file = open("image2.jpg", "rb")
+
+    with sample_col3:
+        st.write("**Sample 3**")
+        st.image("image3.jpg", use_column_width=True)
+        if st.button("Use Sample 3", key="sample3"):
+            uploaded_file = open("image3.jpg", "rb")
+
+    with sample_col4:
+        st.write("**Sample 4**")
+        st.image("image4.jpg", use_column_width=True)
+        if st.button("Use Sample 4", key="sample4"):
+            uploaded_file = open("image4.jpg", "rb")
+
+    # Check if either uploaded file or sample image is selected
     if uploaded_file is not None:
         # Create two columns for layout
         col1, col2 = st.columns([1, 1])
         
         with col1:
             # Display uploaded image
-            image = Image.open(uploaded_file)
-            st.image(image, caption="Uploaded Image", use_column_width=True)
-            
-            # Image information
-            st.subheader("Image Information")
-            st.write(f"**Filename:** {uploaded_file.name}")
-            st.write(f"**Size:** {image.size}")
-            st.write(f"**Mode:** {image.mode}")
+            try:
+                image = Image.open(uploaded_file)
+                st.image(image, caption="Uploaded Image", use_column_width=True)
+                
+                # Image information
+                st.subheader("Image Information")
+                if hasattr(uploaded_file, 'name'):
+                    st.write(f"**Filename:** {uploaded_file.name}")
+                else:
+                    st.write("**Filename:** Sample Image")
+                st.write(f"**Size:** {image.size}")
+                st.write(f"**Mode:** {image.mode}")
+            except Exception as e:
+                st.error(f"Error loading image: {str(e)}")
+                return
         
         with col2:
             # Make prediction
@@ -148,7 +190,7 @@ def main():
                     st.write("**Gender Confidence:**")
                     st.progress(float(results['gender_confidence']))
                     
-                    # Age range visualization (assuming ±5 years uncertainty)
+                    # Age range visualization
                     age_range_min = max(0, results['age'] - 5)
                     age_range_max = min(100, results['age'] + 5)
                     st.write(f"**Estimated Age Range:** {age_range_min:.1f} - {age_range_max:.1f} years")
@@ -165,8 +207,36 @@ def main():
     # Sample images section
     st.markdown("---")
     st.subheader("📸 Don't have an image? Try these samples:")
-    
-    # You can add sample images here
+
+    # Create 4 columns for sample images
+    sample_col1, sample_col2, sample_col3, sample_col4 = st.columns(4)
+
+    # Display sample images
+    with sample_col1:
+        st.write("**Sample 1**")
+        st.image("image1.jpg", use_column_width=True)
+        if st.button("Use Sample 1", key="sample1"):
+            uploaded_file = open("image1.jpg", "rb")
+
+    with sample_col2:
+        st.write("**Sample 2**")
+        st.image("image2.jpg", use_column_width=True)
+        if st.button("Use Sample 2", key="sample2"):
+            uploaded_file = open("image2.jpg", "rb")
+
+    with sample_col3:
+        st.write("**Sample 3**")
+        st.image("image3.jpg", use_column_width=True)
+        if st.button("Use Sample 3", key="sample3"):
+            uploaded_file = open("image3.jpg", "rb")
+
+    with sample_col4:
+        st.write("**Sample 4**")
+        st.image("image4.jpg", use_column_width=True)
+        if st.button("Use Sample 4", key="sample4"):
+            uploaded_file = open("image4.jpg", "rb")
+
+    # Tips section
     st.markdown("""
     **Tips for better predictions:**
     - Use clear, well-lit images
